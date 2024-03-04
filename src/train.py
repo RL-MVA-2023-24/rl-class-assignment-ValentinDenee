@@ -29,15 +29,15 @@ class ReplayBuffer:
 class ProjectAgent:
     def __init__(self):
         self.epsilon_max = 1.0
-        self.epsilon_min = 0.001
-        self.epsilon_decay_period = 2000
-        self.epsilon_delay_decay = 20
+        self.epsilon_min = 0.01
+        self.epsilon_decay_period = 1000
+        self.epsilon_delay_decay = 10
         self.epsilon_step = (self.epsilon_max - self.epsilon_min) / self.epsilon_decay_period
         self.epsilon = self.epsilon_max
         self.model = self.build_model()  # DQN model
         self.target_model = self.build_model()  #target DQN model
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.0001)
-        self.memory = ReplayBuffer(capacity=2000000)
+        self.memory = ReplayBuffer(capacity=100000)
 
     def build_model(self, state_dim=6, n_actions=4, nb_neurons=256):    
         model = nn.Sequential(
