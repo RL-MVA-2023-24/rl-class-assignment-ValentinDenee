@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 from env_hiv import HIVPatient
 from functools import partial
+import gymnasium as gym
 from gym.wrappers import TimeLimit
 
 class ReplayBuffer:
@@ -38,7 +39,7 @@ class ProjectAgent:
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001)
         self.memory = ReplayBuffer(capacity=1000000)
 
-    def build_model(self, state_dim=6, n_actions=4, nb_neurons=24):    
+    def build_model(self, state_dim=6, n_actions=4, nb_neurons=128):    
         model = nn.Sequential(
             nn.Linear(state_dim, nb_neurons),
             nn.ReLU(),
@@ -84,7 +85,7 @@ class ProjectAgent:
    #     print("Agent parameters saved successfully.")
 
     def load(self, file_path=os.path.join(os.path.dirname(__file__), "agent_params.pth")):
-        checkpoint = torch.load(file_path)
+        checkpoint = torch.load(file_path,map_location='cpu')
         self.model.load_state_dict(checkpoint['model_state_dict'])
         self.target_model.load_state_dict(checkpoint['target_model_state_dict'])
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
