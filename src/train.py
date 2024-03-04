@@ -6,7 +6,7 @@ import torch.nn as nn
 from env_hiv import HIVPatient
 from functools import partial
 import gymnasium as gym
-from gym.wrappers import TimeLimit
+from gymnasium.wrappers import TimeLimit
 
 class ReplayBuffer:
     def __init__(self, capacity):
