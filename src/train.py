@@ -36,10 +36,10 @@ class ProjectAgent:
         self.epsilon = self.epsilon_max
         self.model = self.build_model()  # DQN model
         self.target_model = self.build_model()  #target DQN model
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001)
-        self.memory = ReplayBuffer(capacity=1000000)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.0001)
+        self.memory = ReplayBuffer(capacity=100000)
 
-    def build_model(self, state_dim=6, n_actions=4, nb_neurons=128):    
+    def build_model(self, state_dim=6, n_actions=4, nb_neurons=256):    
         model = nn.Sequential(
             nn.Linear(state_dim, nb_neurons),
             nn.ReLU(),
@@ -106,8 +106,8 @@ class ProjectAgent:
         print("Agent parameters saved successfully.")
 
     def gradient_step(self):
-        if len(self.memory) > 100:
-            batch = self.memory.sample(100)
+        if len(self.memory) > 1000:
+            batch = self.memory.sample(1000)
             states, actions, rewards, next_states, dones = zip(*batch)
             states = torch.Tensor(states)
             #states = torch.tensor(np.array(states), dtype=torch.float32)
@@ -125,12 +125,15 @@ class ProjectAgent:
 
     def train(self, env, max_episode):
         episode_returns = []
+        incr1 = 0
         for episode in range(max_episode):
             episode_cum_reward = 0
             state, _ = env.reset()
             incr2 = 0
+            incr1 += 1
             for _ in range(200):  #maximum episode length
                 print(incr2)
+                print(incr1)
                 incr2 += 1
                 if len(self.memory) > 1000:
                     self.epsilon = max(self.epsilon_min, self.epsilon - self.epsilon_step)
